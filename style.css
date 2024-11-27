@@ -463,3 +463,74 @@ h1 {
     font-size: 12px;
     font-weight: 500;
 }
+
+/* Mobile-first responsive design */
+@media screen and (max-width: 768px) {
+    .task-item {
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    .task-content {
+        flex-direction: column;
+    }
+
+    .task-main {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .checkbox {
+        min-width: 24px;
+        min-height: 24px;
+        margin-right: 10px;
+    }
+
+    .delete-btn {
+        padding: 8px 12px;
+        font-size: 20px;
+    }
+
+    .task-description-text {
+        margin-top: 8px;
+        font-size: 14px;
+    }
+
+    .collaborator-count-circle {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+    }
+
+    /* Improve touch targets */
+    button, 
+    .checkbox,
+    .filter,
+    .priority-btn {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 12px;
+    }
+
+    /* Prevent text from being too small */
+    input, 
+    textarea {
+        font-size: 16px !important; /* Prevents iOS zoom on focus */
+        padding: 12px;
+    }
+}
+
+/* Prevent touch highlighting */
+* {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* Allow text selection in inputs and textareas */
+input, 
+textarea {
+    -webkit-user-select: text;
+    user-select: text;
+}
