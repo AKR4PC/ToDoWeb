@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Todo App</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="todo-app">
+            <h1>Task Manager</h1>
+            <div class="input-section">
+                <div class="task-input-row">
+                    <input type="text" id="taskInput" placeholder="Add a new task...">
+                </div>
+                
+                <div class="task-description">
+                    <textarea id="taskDescription" 
+                              placeholder="Add a brief description of the task (optional)"
+                              rows="3"></textarea>
+                </div>
+
+                <div class="priority-selector">
+                    <button class="priority-btn" data-priority="low">Low Priority</button>
+                    <button class="priority-btn selected" data-priority="medium">Medium Priority</button>
+                    <button class="priority-btn" data-priority="high">High Priority</button>
+                </div>
+                
+                <div class="collaborator-input">
+                    <input type="text" id="collaboratorInput" placeholder="Add collaborator name (use commas for multiple)">
+                    <button id="addCollaborator">Add Collaborator</button>
+                </div>
+                
+                <div class="collaborators-preview"></div>
+                
+                <button id="addTask">Create Task</button>
+            </div>
+            
+            <div class="filters">
+                <span class="filter active" data-filter="all">All</span>
+                <span class="filter" data-filter="active">Active</span>
+                <span class="filter" data-filter="completed">Completed</span>
+            </div>
+
+            <ul id="taskList"></ul>
+
+            <div class="task-stats">
+                <span id="taskCount">0 tasks left</span>
+                <button id="clearCompleted">Clear Completed</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
