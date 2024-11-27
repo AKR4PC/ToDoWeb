@@ -26,9 +26,13 @@ document.addEventListener('DOMContentLoaded', () => {
         li.innerHTML = `
             <div class="task-content">
                 <div class="task-main">
-                    <div class="checkbox ${task.completed ? 'checked' : ''}" onclick="toggleTask(${task.id})"></div>
+                    <div class="checkbox ${task.completed ? 'checked' : ''}" 
+                         ontouchstart="toggleTask(${task.id})" 
+                         onclick="toggleTask(${task.id})"></div>
                     <span class="task-text">${task.text}</span>
-                    <button class="delete-btn" onclick="deleteTask(${task.id})">×</button>
+                    <button class="delete-btn" 
+                            ontouchstart="deleteTask(${task.id})" 
+                            onclick="deleteTask(${task.id})">×</button>
                 </div>
                 ${task.description ? `
                     <div class="task-description-text">
@@ -179,4 +183,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     renderTasks();
+
+    addTaskBtn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        addTaskBtn.click();
+    });
+
+    clearCompletedBtn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        clearCompletedBtn.click();
+    });
+
+    filters.forEach(filter => {
+        filter.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            filter.click();
+        });
+    });
+
+    priorityBtns.forEach(btn => {
+        btn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            btn.click();
+        });
+    });
+
+    addCollaboratorBtn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        addCollaboratorBtn.click();
+    });
+
+    if (!document.querySelector('meta[name="viewport"]')) {
+        const meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+        document.head.appendChild(meta);
+    }
 }); 
