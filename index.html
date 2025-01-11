@@ -10,10 +10,10 @@
 </head>
 <body>
     <div class="app-container">
-        <header>
+        <div class="main-content">
             <div class="clock-section">
                 <div class="mode-toggle">
-                    <button id="theme-toggle">
+                    <button onclick="app.toggleTheme()">
                         <i class="fas fa-moon"></i>
                     </button>
                 </div>
@@ -22,9 +22,7 @@
                     Next task due in: <span id="next-task-time">No upcoming tasks</span>
                 </div>
             </div>
-        </header>
 
-        <main>
             <div class="add-task-section">
                 <input type="text" id="new-task-input" placeholder="Add a new task...">
                 <button id="add-task-btn">
@@ -33,59 +31,73 @@
             </div>
 
             <div class="tasks-container">
+                <div class="tasks-header">
+                    <div class="select-all-container">
+                        <label class="custom-checkbox">
+                            <input type="checkbox" id="select-all-tasks">
+                            <span class="checkmark">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            <span class="select-all-text">Select All</span>
+                        </label>
+                        <button id="delete-selected" class="danger-btn" style="display: none;">
+                            <i class="fas fa-trash-alt"></i> Delete Selected
+                        </button>
+                    </div>
+                </div>
                 <div class="tasks-list" id="tasks-list">
                     <!-- Tasks will be added here dynamically -->
                 </div>
+            </div>
+        </div>
 
-                <div class="task-details-panel" id="task-details-panel">
-                    <h3>Task Details</h3>
-                    <div class="task-edit-form">
-                        <input type="text" id="edit-task-title" placeholder="Task title">
-                        <div class="priority-selector">
-                            <label>Priority:</label>
-                            <div class="priority-options">
-                                <button class="priority-btn" data-priority="low">
-                                    <i class="fas fa-circle"></i>
-                                    Easy
-                                </button>
-                                <button class="priority-btn" data-priority="medium">
-                                    <i class="fas fa-circle"></i>
-                                    Medium
-                                </button>
-                                <button class="priority-btn" data-priority="high">
-                                    <i class="fas fa-circle"></i>
-                                    Hard
-                                </button>
-                            </div>
-                        </div>
-                        <div class="deadline-selector">
-                            <label>Deadline:</label>
-                            <input type="datetime-local" id="task-deadline">
-                        </div>
-                        <div class="subtasks-section">
-                            <label>Subtasks:</label>
-                            <div class="subtask-input">
-                                <input type="text" id="new-subtask" placeholder="Add subtask...">
-                                <button id="add-subtask-btn">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                            <ul id="subtasks-list">
-                                <!-- Subtasks will be added here -->
-                            </ul>
-                        </div>
-                        <div class="notes-section">
-                            <label>Notes:</label>
-                            <textarea id="task-notes" placeholder="Add notes..."></textarea>
-                        </div>
-                        <div class="button-group">
-                            <button id="save-task-btn" class="primary-btn">Save Changes</button>
-                            <button id="delete-task-btn" class="danger-btn">Delete Task</button>
-                        </div>
+        <div class="task-details-panel" id="task-details-panel">
+            <h2>Task Details</h2>
+            <div class="task-edit-form">
+                <input type="text" id="edit-task-title" placeholder="Task title">
+                <div class="priority-selector">
+                    <label>Priority:</label>
+                    <div class="priority-options">
+                        <button class="priority-btn" data-priority="low">
+                            <i class="fas fa-circle"></i>
+                            Easy
+                        </button>
+                        <button class="priority-btn" data-priority="medium">
+                            <i class="fas fa-circle"></i>
+                            Medium
+                        </button>
+                        <button class="priority-btn" data-priority="high">
+                            <i class="fas fa-circle"></i>
+                            Hard
+                        </button>
                     </div>
                 </div>
+                <div class="deadline-selector">
+                    <label>Deadline:</label>
+                    <input type="datetime-local" id="task-deadline">
+                </div>
+                <div class="subtasks-section">
+                    <label>Subtasks:</label>
+                    <div class="subtask-input">
+                        <input type="text" id="new-subtask" placeholder="Add subtask...">
+                        <button id="add-subtask-btn">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <ul id="subtasks-list">
+                        <!-- Subtasks will be added here -->
+                    </ul>
+                </div>
+                <div class="notes-section">
+                    <label>Notes:</label>
+                    <textarea id="task-notes" placeholder="Add notes..."></textarea>
+                </div>
+                <div class="button-group">
+                    <button id="save-task-btn" class="primary-btn">Save Changes</button>
+                    <button id="delete-task-btn" class="danger-btn">Delete Task</button>
+                </div>
             </div>
-        </main>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
