@@ -1,39 +1,142 @@
 // Task management
 class TodoApp {
     constructor() {
-        this.tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        this.tasks = [];
         this.selectedTask = null;
-        this.init();
-    }
-
-    init() {
-        // Initialize dark mode
-        this.initTheme();
-        
-        // Initialize clock
+        this.loadTasks();
+        this.setupEventListeners();
         this.updateClock();
         setInterval(() => this.updateClock(), 1000);
+        this.checkDeadlines();
+        setInterval(() => this.checkDeadlines(), 60000);
+    }
 
-        // Initialize Sortable
-        new Sortable(document.getElementById('tasks-list'), {
-            animation: 150,
-            ghostClass: 'dragging',
-            onEnd: () => this.saveTasks()
-        });
+    setupEventListeners() {
+        // Add task event listeners
+        const addTaskBtn = document.getElementById('add-task-btn');
+        const newTaskInput = document.getElementById('new-task-input');
 
-        // Event listeners
-        document.getElementById('add-task-btn').addEventListener('click', () => this.addTask());
-        document.getElementById('new-task-input').addEventListener('keypress', (e) => {
+        addTaskBtn.addEventListener('click', () => this.addTask());
+        newTaskInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.addTask();
         });
+
+        // Save task details
         document.getElementById('save-task-btn').addEventListener('click', () => this.saveTaskDetails());
         document.getElementById('delete-task-btn').addEventListener('click', () => this.deleteTask());
-        document.getElementById('add-subtask-btn').addEventListener('click', () => this.addSubtask());
 
-        // Initialize tasks
+        // Select all functionality
+        const selectAllCheckbox = document.getElementById('select-all-tasks');
+        const deleteSelectedBtn = document.getElementById('delete-selected');
+
+        selectAllCheckbox.addEventListener('change', () => {
+            const isChecked = selectAllCheckbox.checked;
+            const taskCheckboxes = document.querySelectorAll('.task-item input[type="checkbox"]');
+            
+            taskCheckboxes.forEach(checkbox => {
+                checkbox.checked = isChecked;
+            });
+
+            deleteSelectedBtn.style.display = isChecked ? 'flex' : 'none';
+        });
+
+        // Handle individual checkbox changes
+        document.addEventListener('change', (e) => {
+            if (e.target.matches('.task-item input[type="checkbox"]')) {
+                const checkedBoxes = document.querySelectorAll('.task-item input[type="checkbox"]:checked');
+                deleteSelectedBtn.style.display = checkedBoxes.length > 0 ? 'flex' : 'none';
+                
+                const allCheckboxes = document.querySelectorAll('.task-item input[type="checkbox"]');
+                selectAllCheckbox.checked = checkedBoxes.length === allCheckboxes.length;
+            }
+        });
+
+        // Delete selected tasks
+        deleteSelectedBtn.addEventListener('click', () => {
+            const checkedBoxes = document.querySelectorAll('.task-item input[type="checkbox"]:checked');
+            if (checkedBoxes.length === 0) return;
+
+            if (confirm(`Are you sure you want to delete ${checkedBoxes.length} task(s)?`)) {
+                checkedBoxes.forEach(checkbox => {
+                    const taskId = parseInt(checkbox.closest('.task-item').dataset.id);
+                    this.tasks = this.tasks.filter(task => task.id !== taskId);
+                });
+                
+                this.saveTasks();
+                this.renderTasks();
+                selectAllCheckbox.checked = false;
+                deleteSelectedBtn.style.display = 'none';
+                
+                this.showNotification(`Deleted ${checkedBoxes.length} task(s)`);
+            }
+        });
+    }
+
+    loadTasks() {
+        const savedTasks = localStorage.getItem('tasks');
+        if (savedTasks) {
+            this.tasks = JSON.parse(savedTasks);
+        }
+    }
+
+    addTask() {
+        const input = document.getElementById('new-task-input');
+        const title = input.value.trim();
+        if (!title) return;
+
+        const task = {
+            id: Date.now(),
+            title,
+            priority: 'medium',
+            created: new Date().toISOString(),
+            deadline: '',
+            notes: '',
+            subtasks: [],
+            completed: false
+        };
+
+        this.tasks.unshift(task);
+        this.saveTasks();
         this.renderTasks();
-        this.checkDeadlines();
-        setInterval(() => this.checkDeadlines(), 60000); // Check deadlines every minute
+        input.value = '';
+        
+        // Open task details immediately after creating
+        this.openTaskDetails(task);
+    }
+
+    renderTasks() {
+        const tasksList = document.getElementById('tasks-list');
+        tasksList.innerHTML = '';
+        
+        this.tasks.forEach((task, index) => {
+            const taskElement = this.createTaskElement(task);
+            taskElement.style.setProperty('--item-index', index);
+            tasksList.appendChild(taskElement);
+        });
+
+        this.updateNextDeadline();
+    }
+
+    createTaskElement(task) {
+        const div = document.createElement('div');
+        div.className = 'task-item';
+        div.dataset.id = task.id;
+        div.dataset.priority = task.priority;
+
+        div.innerHTML = `
+            <label class="custom-checkbox">
+                <input type="checkbox">
+                <span class="checkmark">
+                    <i class="fas fa-check"></i>
+                </span>
+            </label>
+            <div class="task-content" onclick="app.openTaskDetails(${JSON.stringify(task).replace(/"/g, '&quot;')})">
+                <h3>${task.title}</h3>
+                ${task.deadline ? `<p class="task-deadline"><i class="far fa-clock"></i> ${new Date(task.deadline).toLocaleString()}</p>` : ''}
+            </div>
+        `;
+
+        return div;
     }
 
     initTheme() {
@@ -90,73 +193,6 @@ class TodoApp {
         if (days > 0) return `${days}d ${hours}h`;
         if (hours > 0) return `${hours}h ${minutes}m`;
         return `${minutes}m`;
-    }
-
-    addTask() {
-        const input = document.getElementById('new-task-input');
-        const title = input.value.trim();
-        if (!title) return;
-
-        const task = {
-            id: Date.now(),
-            title,
-            priority: 'medium', // Default priority
-            created: new Date().toISOString(),
-            subtasks: [],
-            notes: '',
-            completed: false
-        };
-
-        this.tasks.unshift(task);
-        this.saveTasks();
-        this.renderTasks();
-        input.value = '';
-        
-        // Open task details immediately after creating
-        this.openTaskDetails(task);
-    }
-
-    renderTasks() {
-        const tasksList = document.getElementById('tasks-list');
-        tasksList.innerHTML = '';
-
-        this.tasks.forEach(task => {
-            const taskElement = this.createTaskElement(task);
-            tasksList.appendChild(taskElement);
-        });
-    }
-
-    createTaskElement(task) {
-        const div = document.createElement('div');
-        div.className = 'task-item';
-        div.dataset.id = task.id;
-        div.dataset.priority = task.priority;
-
-        div.innerHTML = `
-            <div class="task-content">
-                <input type="checkbox" ${task.completed ? 'checked' : ''}>
-                <span class="task-title">${task.title}</span>
-            </div>
-            <div class="task-meta">
-                <span class="priority-badge priority-${task.priority}">
-                    ${task.priority}
-                </span>
-                ${task.deadline ? `<span class="deadline">${new Date(task.deadline).toLocaleDateString()}</span>` : ''}
-            </div>
-        `;
-
-        div.addEventListener('click', (e) => {
-            if (e.target.type !== 'checkbox') {
-                this.openTaskDetails(task);
-            }
-        });
-
-        div.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
-            task.completed = e.target.checked;
-            this.saveTasks();
-        });
-
-        return div;
     }
 
     openTaskDetails(task) {
